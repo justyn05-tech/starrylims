@@ -484,23 +484,28 @@ function saveState(){
   const now = Date.now();
   state._savedAt = now;
   lastSavedAt = now;
-  // Write to localStorage INSTANTLY — zero delay, synchronous
+  // Write to localStorage SYNCHRONOUSLY RIGHT NOW — no timeout, no delay
   const json = JSON.stringify(state);
-  try{ localStorage.setItem(STORAGE_KEY, json); } catch{}
-  try{ localStorage.setItem('starrylims_cache', json); } catch{}
-  // Push to Firebase after short delay (background, for other phones)
-  isSaving = true;
+  localStorage.setItem(STORAGE_KEY, json);
+  localStorage.setItem('starrylims_cache', json);
+  // Push to Firebase in background for other phones
   clearTimeout(syncTimeout);
-  setSyncStatus('syncing','⏳ Saving…');
-  syncTimeout = setTimeout(pushToSheets, 300);
+  syncTimeout = setTimeout(pushToSheets, 1000);
 }
 
-// Emergency save on page unload/refresh
-window.addEventListener('beforeunload', ()=>{
-  if(state&&state.ticks){
+// Also save on any page hide/close event
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='hidden' && state && state.ticks){
     const json = JSON.stringify(state);
-    try{ localStorage.setItem(STORAGE_KEY, json); } catch{}
-    try{ localStorage.setItem('starrylims_cache', json); } catch{}
+    localStorage.setItem(STORAGE_KEY, json);
+    localStorage.setItem('starrylims_cache', json);
+  }
+});
+window.addEventListener('pagehide', ()=>{
+  if(state && state.ticks){
+    const json = JSON.stringify(state);
+    localStorage.setItem(STORAGE_KEY, json);
+    localStorage.setItem('starrylims_cache', json);
   }
 });
 
@@ -512,13 +517,8 @@ async function pushToSheets(){
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify(state),
     });
-    if(res.ok){
-      setSyncStatus('ok','☁️ Saved');
-      isSaving = false;
-    } else {
-      setSyncStatus('error','⚠️ Sync failed');
-      setTimeout(pushToSheets, 5000);
-    }
+    if(res.ok) setSyncStatus('ok','☁️ Saved');
+    else setSyncStatus('error','⚠️ Sync failed');
   } catch{
     setSyncStatus('error','⚠️ Offline');
     setTimeout(pushToSheets, 5000);
