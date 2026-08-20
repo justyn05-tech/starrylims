@@ -387,30 +387,39 @@ function setSyncStatus(status, msg){
 function loadFromSheets(){
   setSyncStatus('ok','☁️ Loading…');
 
-  // Load from localStorage ONLY — instant, reliable, no network needed
-  let bestLocal = null;
-  let bestTs = 0;
-  for(const key of [STORAGE_KEY,'starrylims_cache','starrylims_v1','starrylim_v1']){
-    try{
-      const raw = localStorage.getItem(key);
-      if(!raw) continue;
-      const d = JSON.parse(raw);
-      const ts = d._savedAt||0;
-      if(d.ticks && ts >= bestTs){ bestTs=ts; bestLocal=d; }
-    } catch(e){}
+  // Migrate from old keys ONCE — copy best old data into new key if new key empty
+  const hasNew = localStorage.getItem(STORAGE_KEY);
+  if(!hasNew){
+    let bestOld = null, bestTs = 0;
+    for(const key of ['starrylims_cache','starrylims_v1','starrylim_v1']){
+      try{
+        const raw = localStorage.getItem(key);
+        if(!raw) continue;
+        const d = JSON.parse(raw);
+        const ts = d._savedAt||0;
+        if(d.ticks && ts >= bestTs){ bestTs=ts; bestOld=d; }
+      } catch(e){}
+    }
+    if(bestOld){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(bestOld));
+    }
   }
 
-  if(bestLocal){
-    state = ensureStateKeys(bestLocal);
+  // Now ONLY read from STORAGE_KEY
+  let localData = null;
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) localData = JSON.parse(raw);
+  } catch(e){}
+
+  if(localData && localData.ticks){
+    state = ensureStateKeys(localData);
     repairTickKeys();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    lastSavedAt = bestTs;
+    lastSavedAt = localData._savedAt||0;
     setSyncStatus('ok','☁️ Ready');
     renderHome();
-    // Sync with Firebase in background after render — don't block or overwrite
-    setTimeout(syncWithFirebase, 2000);
+    setTimeout(syncWithFirebase, 3000);
   } else {
-    // No local data — fetch from Firebase (first time setup)
     setSyncStatus('syncing','⏳ Loading…');
     fetchFromFirebase();
   }
@@ -484,28 +493,22 @@ function saveState(){
   const now = Date.now();
   state._savedAt = now;
   lastSavedAt = now;
-  // Write to localStorage SYNCHRONOUSLY RIGHT NOW — no timeout, no delay
   const json = JSON.stringify(state);
+  // Write ONLY to STORAGE_KEY — one source of truth
   localStorage.setItem(STORAGE_KEY, json);
-  localStorage.setItem('starrylims_cache', json);
-  // Push to Firebase in background for other phones
+  // Push to Firebase in background
   clearTimeout(syncTimeout);
   syncTimeout = setTimeout(pushToSheets, 1000);
 }
 
-// Also save on any page hide/close event
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState==='hidden' && state && state.ticks){
-    const json = JSON.stringify(state);
-    localStorage.setItem(STORAGE_KEY, json);
-    localStorage.setItem('starrylims_cache', json);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 });
 window.addEventListener('pagehide', ()=>{
   if(state && state.ticks){
-    const json = JSON.stringify(state);
-    localStorage.setItem(STORAGE_KEY, json);
-    localStorage.setItem('starrylims_cache', json);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 });
 
