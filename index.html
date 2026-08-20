@@ -1,0 +1,1884 @@
+<!-- Starry Starry Lims v4.2 - built 2026-08-20 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Starry Starry Lims">
+<title>✨ Starry Starry Lims</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --amber:#F59E0B;--amber-light:#FEF3C7;--amber-dark:#92400E;
+  --teal:#0D9488;--teal-light:#CCFBF1;
+  --green:#16A34A;--green-light:#DCFCE7;
+  --rose:#E11D48;--rose-light:#FFE4E6;
+  --purple:#7C3AED;--purple-light:#EDE9FE;
+  --sky:#0284C7;--sky-light:#E0F2FE;
+  --bg:#FFFBF0;--card:#FFFFFF;--text:#1C1917;--muted:#78716C;--border:#E7E5E4;
+  --radius:20px;--radius-sm:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto;padding-bottom:110px}
+h1,h2,h3{font-family:'Nunito',sans-serif}
+
+/* Header */
+.header{background:linear-gradient(135deg,#7C3AED 0%,#A855F7 50%,#C084FC 100%);padding:50px 20px 24px;position:relative;overflow:hidden}
+.header::before{content:'🌟';position:absolute;font-size:110px;opacity:0.13;top:-10px;right:-16px;transform:rotate(15deg)}
+.header h1{font-size:26px;font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.2);letter-spacing:-0.5px}
+.header .subtitle{font-size:12px;color:rgba(255,255,255,0.8);margin-top:2px}
+.header-row{display:flex;align-items:flex-end;justify-content:space-between}
+.settings-btn{background:rgba(255,255,255,0.22);border:none;border-radius:12px;width:40px;height:40px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* Nav */
+.nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.nav-tab{flex:1;padding:13px 4px;text-align:center;font-family:'Nunito',sans-serif;font-weight:700;font-size:11px;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all .2s}
+.nav-tab.active{color:var(--purple);border-bottom-color:var(--purple)}
+.nav-tab .tab-icon{font-size:17px;display:block;margin-bottom:2px}
+
+/* Pages */
+.page{display:none;padding:16px}.page.active{display:block}
+
+/* Child card */
+.child-card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:14px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.child-header{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.avatar{width:52px;height:52px;border-radius:50%;font-size:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.child-info h2{font-size:18px;font-weight:800}
+.child-info p{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* Edit name inline */
+.name-edit-wrap{display:flex;align-items:center;gap:6px}
+.name-edit-input{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;border:none;border-bottom:2px solid var(--purple);background:transparent;color:var(--text);outline:none;width:140px;padding:2px 0}
+.name-edit-btn{background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted)}
+
+/* Tick dots */
+.tick-section{margin-bottom:12px}
+.tick-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.tick-row{display:flex;gap:5px;flex-wrap:wrap}
+.tick{width:34px;height:34px;border-radius:9px;border:2px solid var(--border);background:#F5F5F4;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative}
+.tick.earned{border-color:var(--green);background:var(--green-light)}
+.tick.earned::after{content:'✓';color:var(--green);font-weight:900;font-size:18px}
+.tick.redeemed{border-color:var(--amber);background:var(--amber-light)}
+.tick.redeemed::after{content:'⭐';font-size:14px}
+.tick.pending-dot{border-color:var(--purple);background:var(--purple-light);animation:pulse 1.5s infinite}
+.tick.pending-dot::after{content:'?';color:var(--purple);font-weight:900;font-size:16px}
+.tick.today-empty{border-color:var(--rose);border-style:dashed}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+/* Progress pips */
+.pip{width:26px;height:26px;border-radius:7px;border:2px solid var(--border);background:#F5F5F4;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--green)}
+.pip.filled{border-color:var(--green);background:var(--green-light)}
+
+/* Stars bar */
+.stars-section{display:flex;align-items:center;justify-content:space-between;background:var(--amber-light);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px}
+.star-count{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:var(--amber-dark)}
+.star-label{font-size:12px;color:var(--amber-dark);font-weight:600;line-height:1.4}
+.redeem-btn{background:var(--amber);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;transition:all .15s}
+.redeem-btn:active{transform:scale(.95)}
+.redeem-btn:disabled{background:#D4D4D4;cursor:not-allowed}
+
+/* Action buttons */
+.give-tick-btn{flex:1;border:none;border-radius:var(--radius-sm);padding:12px 8px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;color:#fff;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px}
+.give-tick-btn:active{transform:scale(.97)}
+.give-tick-btn:disabled{background:#A3A3A3 !important;cursor:not-allowed}
+
+/* Pending approval block */
+.pending-block{background:#FEF3C7;border:2px solid #F59E0B;border-radius:14px;padding:12px 14px}
+.pending-block .pending-title{font-size:12px;font-weight:700;color:#92400E;margin-bottom:5px}
+.pending-block .pending-note{font-size:13px;color:#78350F;margin-bottom:10px;font-style:italic;line-height:1.5}
+.approve-btn{flex:2;padding:10px;border-radius:10px;border:none;background:var(--green);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer}
+.decline-btn{flex:1;padding:10px;border-radius:10px;border:2px solid var(--rose);background:var(--rose-light);color:var(--rose);font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:28px 28px 0 0;padding:24px 20px 44px;width:100%;max-width:430px;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.modal h3{font-size:20px;font-weight:900;margin-bottom:6px}
+.modal p.sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+textarea,input[type="text"],input[type="number"]{width:100%;border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-family:'Nunito Sans',sans-serif;font-size:15px;color:var(--text);background:var(--bg);outline:none;resize:none;transition:border .2s}
+textarea:focus,input:focus{border-color:var(--purple)}
+.modal-actions{display:flex;gap:10px;margin-top:14px}
+.btn-cancel{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:var(--radius-sm);padding:13px;font-family:'Nunito',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+.btn-confirm{flex:2;color:#fff;border:none;border-radius:var(--radius-sm);padding:13px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer}
+
+/* History / Redeem cards */
+.history-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:12px;overflow:hidden}
+.history-child-header{padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.history-entries{padding:10px 16px}
+.history-entry{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;align-items:flex-start}
+.history-entry:last-child{border-bottom:none}
+.history-date{color:var(--muted);min-width:68px;font-size:11px;padding-top:2px}
+.history-note{flex:1;line-height:1.4}
+.history-who{font-size:11px;padding:2px 7px;border-radius:20px;font-weight:700;flex-shrink:0;white-space:nowrap}
+.who-parent{background:var(--sky-light);color:var(--sky)}
+.who-child{background:var(--purple-light);color:var(--purple)}
+.redeem-entry{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-bottom:1px solid var(--border);align-items:center}
+.redeem-entry:last-child{border-bottom:none}
+.redeem-mins{font-weight:800;color:var(--teal);font-family:'Nunito',sans-serif}
+
+/* Settings */
+.settings-section{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px;margin-bottom:14px}
+.settings-section h3{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.child-setting-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.child-setting-row:last-child{border-bottom:none}
+.child-setting-row .avatar{width:36px;height:36px;font-size:19px}
+.child-setting-row input[type="text"]{flex:1;padding:8px 10px;font-size:14px}
+.screentime-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0}
+.screentime-row label{font-size:15px;font-weight:600}
+.screentime-row input[type="number"]{width:80px;text-align:center;padding:8px}
+
+/* Toast */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:#1C1917;color:#fff;padding:10px 20px;border-radius:30px;font-size:14px;font-weight:700;font-family:'Nunito',sans-serif;opacity:0;transition:all .3s;z-index:300;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.today-dot{width:7px;height:7px;background:var(--rose);border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+.empty-state{text-align:center;padding:32px 20px;color:var(--muted);font-size:14px}
+.empty-state .emoji{font-size:48px;display:block;margin-bottom:10px}
+.section-title{font-size:18px;font-weight:800;margin-bottom:14px}
+/* Calendar */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-nav-btn{background:var(--card);border:1.5px solid var(--border);border-radius:10px;width:38px;height:38px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700}
+.cal-month-label{font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;color:var(--text)}
+.cal-child-tabs{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.cal-child-tab{flex-shrink:0;padding:7px 14px;border-radius:20px;border:2px solid var(--border);background:var(--card);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all .15s}
+.cal-child-tab.active{border-color:var(--purple);background:var(--purple-light);color:var(--purple)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:16px}
+.cal-dow{text-align:center;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0}
+.cal-day{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;position:relative;cursor:default;border:1.5px solid transparent}
+.cal-day.empty{background:transparent}
+.cal-day.other-month{color:#ccc}
+.cal-day.has-tick{background:var(--green-light);color:#15803D;border-color:var(--green)}
+.cal-day.has-pending{background:var(--purple-light);color:var(--purple);border-color:var(--purple)}
+.cal-day.has-redeem{background:var(--amber-light);color:var(--amber-dark);border-color:var(--amber)}
+.cal-day.is-today{box-shadow:0 0 0 2.5px var(--purple);font-weight:900}
+.cal-day.is-today.no-tick{background:var(--rose-light);color:var(--rose);border-color:var(--rose)}
+.cal-day .day-num{font-size:13px;line-height:1}
+.cal-day .day-icon{font-size:10px;line-height:1;margin-top:1px}
+.cal-legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.cal-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.cal-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.cal-detail{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;min-height:80px}
+.cal-detail-date{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;margin-bottom:10px;color:var(--text)}
+.cal-detail-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.cal-detail-row:last-child{border-bottom:none}
+/* Guide page */
+.guide-hero{background:linear-gradient(135deg,#7C3AED 0%,#A855F7 60%,#F59E0B 100%);border-radius:var(--radius);padding:24px 20px;margin-bottom:16px;text-align:center;position:relative;overflow:hidden}
+.guide-hero::before{content:'🌟';position:absolute;font-size:100px;opacity:.1;bottom:-10px;right:-10px}
+.guide-hero h2{font-size:22px;font-weight:900;color:#fff;margin-bottom:6px}
+.guide-hero p{font-size:13px;color:rgba(255,255,255,.85);line-height:1.5}
+.guide-formula{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;flex-wrap:wrap}
+.guide-formula-item{background:rgba(255,255,255,.2);border-radius:12px;padding:8px 14px;text-align:center}
+.guide-formula-item .big{font-size:22px;font-weight:900;color:#fff;font-family:'Nunito',sans-serif;line-height:1}
+.guide-formula-item .small{font-size:10px;color:rgba(255,255,255,.8);margin-top:2px}
+.guide-formula-op{font-size:20px;font-weight:900;color:rgba(255,255,255,.7)}
+.guide-section{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px;margin-bottom:14px}
+.guide-section-title{font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.guide-criterion{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.guide-criterion:last-child{border-bottom:none}
+.guide-criterion-icon{width:44px;height:44px;border-radius:14px;font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.guide-criterion-body h4{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;margin-bottom:3px}
+.guide-criterion-body p{font-size:13px;color:var(--muted);line-height:1.5}
+.guide-tip{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--amber-light);border-radius:12px;margin-bottom:8px}
+.guide-tip:last-child{margin-bottom:0}
+.guide-tip .tip-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.guide-tip p{font-size:13px;color:var(--amber-dark);line-height:1.5}
+.guide-reward-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.guide-reward-row:last-child{border-bottom:none}
+.guide-reward-icon{font-size:28px;width:44px;text-align:center;flex-shrink:0}
+.guide-reward-body{flex:1}
+.guide-reward-body strong{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800}
+.guide-reward-body p{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+.guide-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:'Nunito',sans-serif}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-row">
+    <div>
+      <h1>✨ Starry Starry Lims</h1>
+      <p class="subtitle" id="today-label">Loading… <span style="opacity:.5;font-size:10px">v4.2</span></p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+      <button class="settings-btn" onclick="showPage('settings')">⚙️</button>
+      <span id="sync-status" style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);background:rgba(0,0,0,0.15);padding:3px 8px;border-radius:20px">⏳ Loading…</span>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-tab active" id="tab-home" onclick="showPage('home')"><span class="tab-icon">🏠</span>Today</button>
+  <button class="nav-tab" id="tab-calendar" onclick="showPage('calendar')"><span class="tab-icon">📅</span>Calendar</button>
+  <button class="nav-tab" id="tab-guide" onclick="showPage('guide')"><span class="tab-icon">📖</span>Guide</button>
+  <button class="nav-tab" id="tab-redeem" onclick="showPage('redeem')"><span class="tab-icon">🎮</span>Redeem</button>
+  <button class="nav-tab" id="tab-settings" onclick="showPage('settings')"><span class="tab-icon">⚙️</span>Settings</button>
+</nav>
+
+<div class="page active" id="page-home"></div>
+<div class="page" id="page-calendar"></div>
+<div class="page" id="page-guide"></div>
+<div class="page" id="page-redeem"></div>
+<div class="page" id="page-settings"></div>
+
+<!-- JUSTIFICATION MODAL -->
+<div class="modal-overlay" id="modal-justify">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>✏️ Tell us why!</h3>
+    <p class="sub" id="justify-child-name">What did you do well today?</p>
+    <textarea id="justify-text" rows="4" placeholder="e.g. I finished all my homework and helped set the dinner table…"></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-justify')">Cancel</button>
+      <button class="btn-confirm" style="background:var(--purple)" onclick="submitJustification()">Send to parents 📲</button>
+    </div>
+  </div>
+</div>
+
+<!-- PARENT TICK MODAL -->
+<div class="modal-overlay" id="modal-parent-tick">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>✅ Give a tick</h3>
+    <p class="sub" id="parent-tick-child-name">Leave a message for your child</p>
+    <label style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">💬 Message to child (shown on their card)</label>
+    <textarea id="parent-tick-comment" rows="2" placeholder="e.g. So proud of you today! Keep it up! 🌟"></textarea>
+    <label style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin:12px 0 6px">📋 Private parent note (not shown to child)</label>
+    <textarea id="parent-tick-note" rows="2" placeholder="e.g. Completed homework without reminders, helped with dishes"></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-parent-tick')">Cancel</button>
+      <button class="btn-confirm" style="background:var(--teal)" onclick="submitParentTick()">Give tick ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- REDEEM MODAL -->
+<div class="modal-overlay" id="modal-redeem">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>🎮 Redeem screen time</h3>
+    <p class="sub" id="redeem-child-name">Each ⭐ = <span id="redeem-mins-label">30 mins</span></p>
+    <div style="display:flex;align-items:center;gap:12px;margin:8px 0 14px">
+      <button onclick="changeRedeemQty(-1)" style="width:44px;height:44px;border-radius:12px;border:2px solid var(--border);background:var(--bg);font-size:24px;cursor:pointer;font-weight:900;line-height:1">−</button>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:40px;font-weight:900;font-family:'Nunito',sans-serif" id="redeem-qty">1</div>
+        <div style="font-size:12px;color:var(--muted)">stars to redeem</div>
+      </div>
+      <button onclick="changeRedeemQty(1)" style="width:44px;height:44px;border-radius:12px;border:2px solid var(--border);background:var(--bg);font-size:24px;cursor:pointer;font-weight:900;line-height:1">+</button>
+    </div>
+    <div style="background:var(--teal-light);border-radius:12px;padding:12px;text-align:center;margin-bottom:4px">
+      <span style="font-size:24px;font-weight:900;font-family:'Nunito',sans-serif;color:var(--teal)" id="redeem-total-time">30 mins</span>
+      <div style="font-size:12px;color:var(--teal);margin-top:2px">of screen time earned</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-redeem')">Cancel</button>
+      <button class="btn-confirm" style="background:var(--teal)" onclick="confirmRedeem()">Redeem 🎮</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAST TICK MODAL -->
+<div class="modal-overlay" id="modal-past-tick">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>📅 Add tick for past date</h3>
+    <p class="sub" id="past-tick-label">Adding tick for —</p>
+    <label style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">💬 Message to child (optional)</label>
+    <textarea id="past-tick-comment" rows="2" placeholder="e.g. You did really well that day!"></textarea>
+    <label style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin:12px 0 6px">📋 Private parent note (optional)</label>
+    <textarea id="past-tick-note" rows="2" placeholder="e.g. Completed homework, helped with chores"></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modal-past-tick')">Cancel</button>
+      <button class="btn-confirm" style="background:var(--green)" onclick="submitPastTick()">Add tick ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN MODAL -->
+<div class="modal-overlay" id="modal-pin">
+  <div class="modal" style="padding-bottom:50px">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;margin-bottom:6px">
+      <div style="font-size:36px" id="pin-icon">🔒</div>
+      <h3 style="margin-bottom:4px" id="pin-title">Parent Access</h3>
+      <p class="sub" id="pin-subtitle">Enter your 4-digit PIN</p>
+    </div>
+    <div style="display:flex;justify-content:center;gap:14px;margin:16px 0" id="pin-dots-row">
+      <div id="pin-dot-0" style="width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:var(--bg);transition:all .15s"></div>
+      <div id="pin-dot-1" style="width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:var(--bg);transition:all .15s"></div>
+      <div id="pin-dot-2" style="width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:var(--bg);transition:all .15s"></div>
+      <div id="pin-dot-3" style="width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:var(--bg);transition:all .15s"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:260px;margin:0 auto" id="pin-numpad"></div>
+    <p id="pin-error" style="text-align:center;color:var(--rose);font-size:13px;font-weight:700;margin-top:12px;min-height:18px"></p>
+    <button onclick="pinCallback=null;closeModal('modal-pin');pinReset()" style="display:block;margin:4px auto 0;background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;font-family:'Nunito Sans',sans-serif">Cancel</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const COLORS = [
+  { bg:'#FEF3C7', emoji:'🦁', accent:'#F59E0B' },
+  { bg:'#DCFCE7', emoji:'🐸', accent:'#16A34A' },
+  { bg:'#EDE9FE', emoji:'🦄', accent:'#7C3AED' },
+  { bg:'#FFE4E6', emoji:'🦊', accent:'#E11D48' },
+];
+
+const FIREBASE_URL = 'https://starry-starry-lims-40c88-default-rtdb.asia-southeast1.firebasedatabase.app/state.json';
+const STORAGE_KEY = 'starrylims_v3'; // new key forces fresh load
+
+const DEFAULT = {
+  children:[
+    {id:1,name:'Child 1',color:0,waNumber:'',starOverride:null,redeemUnit:'mins',overrideTickCount:0},
+    {id:2,name:'Child 2',color:1,waNumber:'',starOverride:null,redeemUnit:'mins',overrideTickCount:0},
+    {id:3,name:'Child 3',color:2,waNumber:'',starOverride:null,redeemUnit:'mins',overrideTickCount:0},
+  ],
+  ticks:{},
+  pendingTicks:{},
+  redemptionDates:[],
+  redemptions:[],
+  minsPerStar:30,
+  waDad:'',
+  waMom:'',
+  parentPin:'0000',
+};
+
+let state = JSON.parse(JSON.stringify(DEFAULT));
+let syncTimeout = null;
+let isSaving = false;
+let lastSavedAt = 0;
+
+function ensureStateKeys(d){
+  if(!d) d={};
+  if(!d.pendingTicks) d.pendingTicks={};
+  if(!d.waDad) d.waDad='';
+  if(!d.waMom) d.waMom='';
+  if(!d.redemptionDates) d.redemptionDates=[];
+  if(!d.ticks) d.ticks={};
+  if(!d.redemptions) d.redemptions=[];
+  if(!d.children || !Array.isArray(d.children)) d.children=JSON.parse(JSON.stringify(DEFAULT.children));
+  if(!d.minsPerStar) d.minsPerStar=30;
+  if(!d.parentPin) d.parentPin='0000';
+  d.children.forEach(c=>{
+    if(!c.waNumber) c.waNumber='';
+    if(!('starOverride' in c)||c.starOverride===undefined) c.starOverride=null;
+    if(!c.redeemUnit) c.redeemUnit='mins';
+    if(!c.overrideTickCount) c.overrideTickCount=0;
+  });
+  return d;
+}
+
+// ── SYNC STATUS UI ────────────────────────────────────────────────────────────
+function setSyncStatus(status, msg){
+  const el = document.getElementById('sync-status');
+  if(!el) return;
+  const colors = {syncing:'#A855F7', ok:'#16A34A', error:'#E11D48'};
+  el.textContent = msg;
+  el.style.color = colors[status]||'#A855F7';
+}
+
+// ── LOAD ──────────────────────────────────────────────────────────────────────
+async function loadFromSheets(){
+  setSyncStatus('syncing','⏳ Loading…');
+
+  // ── STEP 1: Load localStorage SYNCHRONOUSLY — instant, never fails ──────────
+  let bestLocal = null;
+  let bestTs = 0;
+  for(const key of [STORAGE_KEY,'starrylims_cache','starrylims_v1','starrylim_v1']){
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) continue;
+      const d = JSON.parse(raw);
+      const ts = d._savedAt||0;
+      if(d.ticks && ts >= bestTs){ bestTs=ts; bestLocal=d; }
+    } catch(e){}
+  }
+
+  if(bestLocal){
+    // We have local data — use it immediately, render NOW
+    state = ensureStateKeys(bestLocal);
+    repairTickKeys();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    lastSavedAt = bestTs;
+    setSyncStatus('ok','☁️ Ready');
+    renderHome();
+  }
+
+  // ── STEP 2: Fetch Firebase in background — only update if NEWER ─────────────
+  try{
+    const res = await fetch(FIREBASE_URL+'?t='+Date.now());
+    const data = await res.json();
+    if(data && data.ticks){
+      const remoteTs = data._savedAt||0;
+      if(remoteTs > lastSavedAt){
+        // Firebase genuinely has newer data (from another phone)
+        state = ensureStateKeys(data);
+        repairTickKeys();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        lastSavedAt = remoteTs;
+        setSyncStatus('ok','☁️ Synced');
+        renderHome();
+      } else if(!bestLocal){
+        // No local data at all — use Firebase whatever the timestamp
+        state = ensureStateKeys(data);
+        repairTickKeys();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        lastSavedAt = remoteTs;
+        setSyncStatus('ok','☁️ Synced');
+        renderHome();
+      } else {
+        // Local is newer — push local up to Firebase
+        setSyncStatus('ok','☁️ Live');
+        pushToSheets();
+      }
+    } else if(!bestLocal){
+      // Firebase empty, no local — fresh start
+      state = JSON.parse(JSON.stringify(DEFAULT));
+      renderHome();
+      setSyncStatus('ok','☁️ Ready');
+    } else {
+      // Firebase empty but we have local — push local to Firebase
+      setSyncStatus('ok','☁️ Live');
+      pushToSheets();
+    }
+  } catch(e){
+    if(!bestLocal){
+      state = JSON.parse(JSON.stringify(DEFAULT));
+      renderHome();
+    }
+    setSyncStatus('error','⚠️ Offline');
+  }
+
+  setInterval(pollSheets, 20000);
+}
+
+// ── POLL ──────────────────────────────────────────────────────────────────────
+async function pollSheets(){
+  if(isSaving||syncTimeout) return;
+  try{
+    const res = await fetch(FIREBASE_URL+'?t='+Date.now());
+    const data = await res.json();
+    if(!data||!data.ticks) return;
+    const remoteTs = data._savedAt||0;
+    if(remoteTs<=lastSavedAt){ setSyncStatus('ok','☁️ Live'); return; }
+    if(isSaving||syncTimeout) return;
+    state = ensureStateKeys(data);
+    repairTickKeys();
+    lastSavedAt = remoteTs;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    setSyncStatus('ok','☁️ Live');
+    const p = document.querySelector('.page.active');
+    if(p){
+      const id=p.id.replace('page-','');
+      if(id==='home') renderHome();
+      else if(id==='redeem') renderRedeem();
+      else if(id==='calendar') renderCalendar();
+    }
+  } catch{ setSyncStatus('error','⚠️ Offline'); }
+}
+
+// ── SAVE ──────────────────────────────────────────────────────────────────────
+function saveState(){
+  const now = Date.now();
+  state._savedAt = now;
+  lastSavedAt = now;
+  // Write to localStorage INSTANTLY — zero delay, synchronous
+  const json = JSON.stringify(state);
+  try{ localStorage.setItem(STORAGE_KEY, json); } catch{}
+  try{ localStorage.setItem('starrylims_cache', json); } catch{}
+  // Push to Firebase after short delay (background, for other phones)
+  isSaving = true;
+  clearTimeout(syncTimeout);
+  setSyncStatus('syncing','⏳ Saving…');
+  syncTimeout = setTimeout(pushToSheets, 300);
+}
+
+// Emergency save on page unload/refresh
+window.addEventListener('beforeunload', ()=>{
+  if(state&&state.ticks){
+    const json = JSON.stringify(state);
+    try{ localStorage.setItem(STORAGE_KEY, json); } catch{}
+    try{ localStorage.setItem('starrylims_cache', json); } catch{}
+  }
+});
+
+async function pushToSheets(){
+  syncTimeout = null;
+  try{
+    const res = await fetch(FIREBASE_URL,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(state),
+    });
+    if(res.ok){
+      setSyncStatus('ok','☁️ Saved');
+      isSaving = false;
+    } else {
+      setSyncStatus('error','⚠️ Sync failed');
+      setTimeout(pushToSheets, 5000);
+    }
+  } catch{
+    setSyncStatus('error','⚠️ Offline');
+    setTimeout(pushToSheets, 5000);
+  }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+// Always use LOCAL date (SGT) — toISOString() returns UTC which is wrong for Singapore
+function todayStr(){
+  const d = new Date();
+  const yr = d.getFullYear();
+  const mo = String(d.getMonth()+1).padStart(2,'0');
+  const dy = String(d.getDate()).padStart(2,'0');
+  return yr+'-'+mo+'-'+dy;
+}
+function fmtDate(str){
+  const d=new Date(str+'T00:00:00');
+  return d.toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'});
+}
+function fmtShort(str){
+  const d=new Date(str+'T00:00:00');
+  return d.toLocaleDateString('en-SG',{day:'numeric',month:'short'});
+}
+function getLast30Days(){
+  return Array.from({length:30},(_,i)=>{
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const yr=d.getFullYear();
+    const mo=String(d.getMonth()+1).padStart(2,'0');
+    const dy=String(d.getDate()).padStart(2,'0');
+    return yr+'-'+mo+'-'+dy;
+  });
+}
+function getTicksForChild(cid){
+  cid=Number(cid);
+  const prefix=String(cid)+'-';
+  return Object.entries(state.ticks)
+    .filter(([k])=>k.startsWith(prefix))
+    .map(([k,v])=>({date:k.slice(prefix.length),...v}))
+    .sort((a,b)=>b.date.localeCompare(a.date));
+}
+
+// Repair tick keys: normalise "1-YYYY-MM-DD" keys, drop nothing valid
+function repairTickKeys(){
+  if(!state.ticks) return;
+  const fixed={};
+  Object.entries(state.ticks).forEach(([k,v])=>{
+    const m=k.match(/^(\d+)-(\d{4}-\d{2}-\d{2})$/);
+    if(m){ fixed[k]=v; return; }
+    // Fix missing zero-padding e.g. "1-2026-8-9"
+    const m2=k.match(/^(\d+)-(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if(m2){
+      const newKey=m2[1]+'-'+m2[2]+'-'+String(m2[3]).padStart(2,'0')+'-'+String(m2[4]).padStart(2,'0');
+      fixed[newKey]=v;
+    } else {
+      fixed[k]=v; // keep anything else as-is — never drop ticks
+    }
+  });
+  state.ticks=fixed;
+  // Do NOT call saveState() here — caller handles saving if needed
+}
+
+function getStarsForChild(cid){
+  cid=Number(cid);
+  const child=state.children.find(c=>c.id===cid);
+  if(!child) return 0;
+
+  if(child.starOverride!==null && child.starOverride!==undefined){
+    // Override = parent manually set the balance.
+    // Only subtract redemptions that happened AFTER the override was set.
+    const redeemedAfter=state.redemptions
+      .filter(r=>Number(r.childId)===cid && r.afterOverride)
+      .reduce((s,r)=>s+(r.stars||0),0);
+    return Math.max(0, child.starOverride - redeemedAfter);
+  }
+
+  // Normal mode: stars earned from ticks minus all redemptions
+  const totalTicks=getTicksForChild(cid).length;
+  const earned=Math.floor(totalTicks/5);
+  const redeemed=state.redemptions
+    .filter(r=>Number(r.childId)===cid && !r.afterOverride)
+    .reduce((s,r)=>s+(r.stars||0),0);
+  return Math.max(0, earned - redeemed);
+}
+function getTotalStarsEarned(cid){return Math.floor(getTicksForChild(cid).length/5)}
+function hasTodayTick(cid){return !!state.ticks[cid+'-'+todayStr()]}
+function hasPendingTick(cid){return !!state.pendingTicks[cid+'-'+todayStr()]}
+function getPendingTick(cid){return state.pendingTicks[cid+'-'+todayStr()]||null}
+function isRedemptionDay(dateStr, cid){
+  const cdKey=String(cid)+'-'+dateStr;
+  // Check per-child key (new format) or legacy global key
+  return (state.redemptionDates||[]).includes(cdKey) ||
+    state.redemptions.some(r=>r.childId===cid && r.dateStr===dateStr);
+}
+function fmtTime(mins){
+  if(mins>=60) return Math.floor(mins/60)+'h'+(mins%60?mins%60+'m':'');
+  return mins+'m';
+}
+function fmtReward(stars, child){
+  const unit=(child&&child.redeemUnit)||'mins';
+  if(unit==='days') return stars+(stars===1?' day':' days')+' screen time';
+  return fmtTime(stars * state.minsPerStar);
+}
+function fmtRewardSingle(child){
+  const unit=(child&&child.redeemUnit)||'mins';
+  if(unit==='days') return '1 day screen time';
+  return fmtTime(state.minsPerStar)+' screen time';
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// ── SOUNDS ────────────────────────────────────────────────────────────────────
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let actx = null;
+function getAudioCtx(){
+  if(!actx) actx = new AudioCtx();
+  // Resume if suspended (iOS requires user gesture first)
+  if(actx.state==='suspended') actx.resume();
+  return actx;
+}
+function playTone(freq, type, duration, vol=0.3){
+  try{
+    const ctx=getAudioCtx();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type=type; osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+duration);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime+duration);
+  }catch{}
+}
+function soundTick(){
+  // Satisfying two-note "ding ding"
+  playTone(880,'sine',0.15,0.3);
+  setTimeout(()=>playTone(1100,'sine',0.2,0.25),120);
+}
+function soundStar(){
+  // Magical ascending chime for a new star
+  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',0.3,0.35),i*80));
+}
+function soundSubmit(){
+  // Soft "whoosh" pop for submitting justification
+  playTone(440,'sine',0.1,0.2);
+  setTimeout(()=>playTone(660,'sine',0.18,0.2),80);
+}
+function soundRedeem(){
+  // Celebratory fanfare
+  [523,523,784,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'triangle',0.25,0.3),i*100));
+}
+function soundDecline(){
+  // Low dull thud
+  playTone(220,'sawtooth',0.2,0.15);
+  setTimeout(()=>playTone(180,'sawtooth',0.15,0.2),100);
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+// ── PIN ENGINE ────────────────────────────────────────────────────────────────
+let pinEntry='', pinMode='verify', pinNewFirst='', pinCallback=null;
+
+function buildNumpad(){
+  const pad=document.getElementById('pin-numpad');
+  if(!pad) return;
+  pad.innerHTML=[1,2,3,4,5,6,7,8,9,'','0','⌫'].map(k=>`
+    <button onclick="pinKey('${k}')"
+      style="height:56px;border-radius:14px;border:1.5px solid var(--border);
+             background:${k===''?'transparent':'var(--card)'};
+             font-family:'Nunito',sans-serif;font-size:${k==='⌫'?'22px':'20px'};
+             font-weight:800;cursor:${k===''?'default':'pointer'};
+             color:var(--text);${k===''?'pointer-events:none;border-color:transparent':''}">
+      ${k}</button>`).join('');
+}
+
+function pinReset(){
+  pinEntry=''; pinNewFirst='';
+  // Note: do NOT clear pinCallback here — it's cleared after use in pinSubmit
+  const err=document.getElementById('pin-error');
+  if(err) err.textContent='';
+  updatePinDots();
+}
+
+function updatePinDots(){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('pin-dot-'+i);
+    if(!d) return;
+    d.style.background=i<pinEntry.length?'var(--purple)':'var(--bg)';
+    d.style.borderColor=i<pinEntry.length?'var(--purple)':'var(--border)';
+  }
+}
+
+function pinKey(k){
+  if(k==='') return;
+  if(k==='⌫'){
+    pinEntry=pinEntry.slice(0,-1);
+    updatePinDots();
+    document.getElementById('pin-error').textContent='';
+    return;
+  }
+  if(pinEntry.length>=4) return;
+  pinEntry+=k; updatePinDots();
+  if(pinEntry.length===4) setTimeout(pinSubmit,150);
+}
+
+function pinSubmit(){
+  if(pinMode==='verify'){
+    if(pinEntry===(state.parentPin||'0000')){
+      const cb=pinCallback; // save BEFORE pinReset clears it
+      closeModal('modal-pin');
+      pinReset();
+      if(cb) cb();
+    } else {
+      document.getElementById('pin-error').textContent='❌ Wrong PIN. Try again.';
+      pinEntry=''; updatePinDots();
+      const m=document.querySelector('#modal-pin .modal');
+      m.style.transform='translateX(8px)';
+      setTimeout(()=>{m.style.transform='translateX(-8px)';setTimeout(()=>m.style.transform='',100);},110);
+    }
+  } else if(pinMode==='set-new-1'){
+    pinNewFirst=pinEntry; pinEntry=''; updatePinDots();
+    document.getElementById('pin-subtitle').textContent='Confirm your new PIN';
+    document.getElementById('pin-error').textContent='';
+    pinMode='set-new-2';
+  } else if(pinMode==='set-new-2'){
+    if(pinEntry===pinNewFirst){
+      state.parentPin=pinEntry; saveState();
+      closeModal('modal-pin'); pinReset(); pinMode='verify';
+      showToast('🔒 PIN updated!'); renderSettings();
+    } else {
+      document.getElementById('pin-error').textContent='❌ PINs don\'t match. Try again.';
+      pinEntry=''; pinNewFirst=''; updatePinDots();
+      pinMode='set-new-1';
+      document.getElementById('pin-subtitle').textContent='Enter your new 4-digit PIN';
+    }
+  }
+}
+
+function requirePin(callback){
+  pinMode='verify'; pinReset();
+  document.getElementById('pin-icon').textContent='🔒';
+  document.getElementById('pin-title').textContent='Parent Access';
+  document.getElementById('pin-subtitle').textContent='Enter your 4-digit PIN';
+  pinCallback=callback; buildNumpad(); openModal('modal-pin');
+}
+
+function openChangePin(){
+  // First verify old PIN, then allow change
+  requirePin(()=>{
+    setTimeout(()=>{
+      pinMode='set-new-1'; pinReset();
+      document.getElementById('pin-icon').textContent='🔑';
+      document.getElementById('pin-title').textContent='Change PIN';
+      document.getElementById('pin-subtitle').textContent='Enter your new 4-digit PIN';
+      buildNumpad(); openModal('modal-pin');
+    },200);
+  });
+}
+
+// ── NAME EDITING ──────────────────────────────────────────────────────────────
+let editingChildId=null;
+function startEditName(cid){
+  editingChildId=cid;
+  renderHome();
+  setTimeout(()=>{
+    const inp=document.getElementById('name-input-'+cid);
+    if(inp){inp.focus();inp.select()}
+  },50);
+}
+function finishEditName(cid,val){
+  const child=state.children.find(c=>c.id===cid);
+  if(child){child.name=(val||'Child').trim()||'Child';saveState()}
+  editingChildId=null;
+  renderHome();
+}
+
+// ── CHILD TICK REQUEST ────────────────────────────────────────────────────────
+function childWantsTick(cid){
+  cid=Number(cid);
+  if(hasTodayTick(cid)||hasPendingTick(cid)) return;
+  modalChildId=cid;
+  const child=state.children.find(c=>c.id===cid);
+  document.getElementById('justify-child-name').textContent=child.name+', what did you do well today?';
+  document.getElementById('justify-text').value='';
+  openModal('modal-justify');
+}
+
+function submitJustification(){
+  const txt=document.getElementById('justify-text').value.trim();
+  if(!txt){showToast('Please write something first! ✏️');return}
+  const key=modalChildId+'-'+todayStr();
+  state.pendingTicks[key]={note:txt,submittedAt:new Date().toISOString()};
+  soundSubmit();
+  saveState();
+  closeModal('modal-justify');
+
+  const child=state.children.find(c=>c.id===modalChildId);
+  const msg=encodeURIComponent(
+    '✨ Starry Starry Lims — Tick Request!\n\n'+
+    '👦 '+child.name+' is requesting a tick for today ('+fmtDate(todayStr())+').\n\n'+
+    '📝 Justification:\n"'+txt+'"\n\n'+
+    'Open Starry Starry Lims → Today → tap ✓ Approve to grant the tick.'
+  );
+
+  const dad=state.waDad.replace(/\D/g,'');
+  const mom=state.waMom.replace(/\D/g,'');
+  let sent=0;
+  if(dad){window.open('https://wa.me/'+dad+'?text='+msg,'_blank');sent++}
+  if(mom){setTimeout(()=>window.open('https://wa.me/'+mom+'?text='+msg,'_blank'),600);sent++}
+  if(sent===0){
+    showToast('📋 Pending — add parent numbers in Settings!');
+  } else {
+    showToast('📲 Sent to parent'+(sent>1?'s':'')+' via WhatsApp!');
+  }
+  renderHome();
+}
+
+// ── APPROVE / REJECT ──────────────────────────────────────────────────────────
+function approvePendingTick(cid){
+  cid=Number(cid);
+  requirePin(()=>_approvePendingTick(cid));
+}
+function _approvePendingTick(cid){
+  cid=Number(cid);
+  const key=cid+'-'+todayStr();
+  const pending=state.pendingTicks[key];
+  if(!pending) return;
+  state.ticks[key]={who:'child',note:pending.note};
+  delete state.pendingTicks[key];
+  saveState();
+  const child=state.children.find(c=>c.id===cid);
+  const ticks=getTicksForChild(cid).length;
+  const newStar=ticks%5===0&&ticks>0;
+  if(newStar){soundStar();showToast('🌟 New star earned for '+child.name+'!');}
+  else{soundTick();showToast('✅ Tick approved for '+child.name+'!');}
+  renderHome();
+}
+function rejectPendingTick(cid){
+  cid=Number(cid);
+  requirePin(()=>_rejectPendingTick(cid));
+}
+function _rejectPendingTick(cid){
+  cid=Number(cid);
+  const key=cid+'-'+todayStr();
+  delete state.pendingTicks[key];
+  saveState();
+  soundDecline();
+  const child=state.children.find(c=>c.id===cid);
+  showToast('❌ Request declined for '+child.name);
+  renderHome();
+}
+
+// ── PARENT DIRECT TICK ────────────────────────────────────────────────────────
+function parentGivesTick(cid){
+  cid=Number(cid);
+  requirePin(()=>_parentGivesTick(cid));
+}
+function _parentGivesTick(cid){
+  cid=Number(cid);
+  if(hasTodayTick(cid)||hasPendingTick(cid)) return;
+  modalChildId=cid;
+  const child=state.children.find(c=>c.id===cid);
+  document.getElementById('parent-tick-child-name').textContent='Note for '+child.name+' (optional)';
+  document.getElementById('parent-tick-note').value='';
+  openModal('modal-parent-tick');
+}
+function submitParentTick(){
+  const comment=document.getElementById('parent-tick-comment').value.trim();
+  const note=document.getElementById('parent-tick-note').value.trim();
+  const cid=Number(modalChildId);
+  const key=String(cid)+'-'+todayStr();
+  state.ticks[key]={who:'parent',note:note||'Good day! ⭐',comment:comment||''};
+  delete state.pendingTicks[key];
+  closeModal('modal-parent-tick');
+  const child=state.children.find(c=>c.id===cid);
+  const ticks=getTicksForChild(cid).length;
+  const newStar=ticks%5===0&&ticks>0;
+  if(newStar){soundStar();showToast('🌟 Star earned for '+child.name+'!');}
+  else{soundTick();showToast('✅ Tick given to '+child.name+'!');}
+  renderHome();
+  saveState();
+
+  // Ping child on WhatsApp if they have a number and there's a comment
+  const childWa=(child.waNumber||'').replace(/\D/g,'');
+  if(childWa && comment){
+    const starLine=newStar?'\n\n🌟 You also earned a new STAR! Keep it up!':'';
+    const msg=encodeURIComponent(
+      '✨ Starry Starry Lims\n\n'+
+      'Hi '+child.name+'! You got a tick today ('+fmtDate(todayStr())+')! ✅\n\n'+
+      '💬 Message from Mum/Dad:\n"'+comment+'"'+starLine
+    );
+    setTimeout(()=>window.open('https://wa.me/'+childWa+'?text='+msg,'_blank'),400);
+  }
+}
+
+// ── REDEEM ────────────────────────────────────────────────────────────────────
+function openRedeem(cid){
+  cid=Number(cid);
+  const avail=getStarsForChild(cid);
+  if(avail===0){showToast('No stars to redeem yet! ⭐');return;}
+  requirePin(()=>{
+    const child=state.children.find(c=>c.id===cid);
+    if(!child) return;
+    const reward=fmtRewardSingle(child);
+    const ok=window.confirm(
+      'Redeem 1 ⭐ for '+child.name+'?\n\n'+
+      '1 star = '+reward+'\n'+
+      'Stars after redeem: '+(avail-1)
+    );
+    if(ok) doRedeem(cid);
+  });
+}
+
+function doRedeem(cid){
+  cid=Number(cid);
+  const child=state.children.find(c=>c.id===cid);
+  if(!child) return;
+  const avail=getStarsForChild(cid);
+  if(avail===0){showToast('No stars left!');return;}
+  const today=todayStr();
+  const hasOverride=child.starOverride!==null&&child.starOverride!==undefined;
+  const mins=(child.redeemUnit==='days')?0:state.minsPerStar;
+  const days=(child.redeemUnit==='days')?1:0;
+
+  if(!state.redemptions) state.redemptions=[];
+  state.redemptions.push({
+    childId:child.id, stars:1, mins, days,
+    date:new Date().toISOString(),
+    dateStr:today,
+    afterOverride:hasOverride
+  });
+
+  if(!state.redemptionDates) state.redemptionDates=[];
+  const cdKey=String(child.id)+'-'+today;
+  if(!state.redemptionDates.includes(cdKey)) state.redemptionDates.push(cdKey);
+
+  // Do NOT decrement starOverride directly — getStarsForChild subtracts
+  // afterOverride redemptions from the override balance automatically
+
+  saveState();
+  soundRedeem();
+
+  const starsNow=getStarsForChild(child.id);
+  showToast('🎮 '+child.name+' unlocked '+fmtRewardSingle(child)+'! ⭐'+starsNow+' left');
+  renderHome();
+  renderRedeem();
+  const calPage=document.getElementById('page-calendar');
+  if(calPage&&calPage.classList.contains('active')) renderCalendar();
+}
+
+// kept for modal button compat
+function changeRedeemQty(d){}
+function updateRedeemUI(){}
+function confirmRedeem(){}
+
+// ── RENDER HOME ───────────────────────────────────────────────────────────────
+function renderHome(){
+  const today=todayStr();
+  const days30=getLast30Days();
+  // Always sync header with live system clock
+  const el=document.getElementById('today-label');
+  if(el) el.textContent='Starry Starry Lims · '+fmtDate(today);
+  let html='';
+
+  for(const child of state.children){
+    const c=COLORS[child.color%COLORS.length];
+    const tickEntries=getTicksForChild(child.id);
+    const totalTicks=tickEntries.length;
+    const stars=getStarsForChild(child.id);
+    const todayDone=hasTodayTick(child.id);
+    const todayPending=hasPendingTick(child.id);
+    const pendingData=getPendingTick(child.id);
+    const isMins=(child.redeemUnit||'mins')==='mins';
+    const screenTimeAvail=isMins ? fmtTime(stars*state.minsPerStar) : (stars+(stars===1?' day':' days'));
+    const tickSet=new Set(tickEntries.map(t=>t.date));
+    // Progress pips: always count from all ticks mod 5
+    // so adding a tick always moves the progress forward
+    const ticksIntoStar=totalTicks%5;
+
+    // Tick dots — 30 days newest first
+    let tickDots='';
+    for(let i=0;i<30;i++){
+      const d=days30[i];
+      const isToday=d===today;
+      const earned=tickSet.has(d);
+      const redeemDay=isRedemptionDay(d, child.id)&&!earned;
+      if(isToday&&todayPending&&!earned){
+        tickDots+=`<div class="tick pending-dot" title="Pending approval"></div>`;
+      } else if(isToday&&!earned&&!todayPending){
+        tickDots+=`<div class="tick today-empty" title="Today — no tick yet"></div>`;
+      } else if(earned){
+        tickDots+=`<div class="tick earned" title="${fmtShort(d)}"></div>`;
+      } else if(redeemDay){
+        tickDots+=`<div class="tick redeemed" title="Redeemed ${fmtShort(d)}"></div>`;
+      } else {
+        tickDots+=`<div class="tick" title="${fmtShort(d)}"></div>`;
+      }
+    }
+
+    // Progress pips
+    const pips=[0,1,2,3,4].map(i=>`<div class="pip${i<ticksIntoStar?' filled':''}">${i<ticksIntoStar?'✓':''}</div>`).join('');
+
+    // Name header — editable inline
+    const nameHtml=editingChildId===child.id
+      ? `<div class="name-edit-wrap">
+          <input class="name-edit-input" id="name-input-${child.id}" value="${child.name}"
+            onblur="finishEditName(${child.id},this.value)"
+            onkeydown="if(event.key==='Enter')this.blur()">
+         </div>`
+      : `<h2 style="cursor:pointer" onclick="startEditName(${child.id})">${child.name} <span style="font-size:13px;color:var(--muted)">✏️</span></h2>`;
+
+    let statusLine='<span class="today-dot"></span>';
+    if(todayDone) statusLine+='Tick received today ✓';
+    else if(todayPending) statusLine+='⏳ Awaiting parent approval…';
+    else statusLine+='No tick yet today';
+
+    // Bottom action area
+    let actionArea='';
+    if(todayPending){
+      actionArea=`<div class="pending-block">
+        <div class="pending-title">⏳ Pending approval — ${child.name}</div>
+        <div class="pending-note">"${pendingData.note}"</div>
+        <div style="display:flex;gap:8px">
+          <button class="decline-btn" onclick="rejectPendingTick(${child.id})">✕ Decline</button>
+          <button class="approve-btn" onclick="approvePendingTick(${child.id})">✓ Approve tick</button>
+        </div>
+      </div>`;
+    } else {
+      const dis=todayDone?'disabled':'';
+      actionArea=`<div style="display:flex;gap:8px">
+        <button class="give-tick-btn" style="background:#7C3AED" onclick="childWantsTick(${child.id})" ${dis}>✏️ I earned it!</button>
+        <button class="give-tick-btn" style="background:#0D9488" onclick="parentGivesTick(${child.id})" ${dis}>👨‍👩‍👧 Parent tick</button>
+      </div>`;
+    }
+
+    // Parent comment bubble (shown to child when tick is given today by parent)
+    const todayTickData = state.ticks[child.id+'-'+today];
+    const parentComment = todayTickData && todayTickData.who==='parent' && todayTickData.comment
+      ? `<div style="background:var(--purple-light);border-left:3px solid var(--purple);border-radius:0 12px 12px 0;padding:10px 12px;margin-bottom:12px">
+          <div style="font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">💬 Message from Mum/Dad</div>
+          <div style="font-size:14px;color:#4C1D95;line-height:1.5">${todayTickData.comment}</div>
+        </div>` : '';
+
+    html+=`<div class="child-card">
+      <div class="child-header">
+        <div class="avatar" style="background:${c.bg};color:${c.accent}">${c.emoji}</div>
+        <div class="child-info" style="flex:1;min-width:0">
+          ${nameHtml}
+          <p>${statusLine}</p>
+        </div>
+      </div>
+
+      ${parentComment}
+
+      <div class="tick-section">
+        <div class="tick-label">Last 30 days <span style="color:#ccc;font-weight:400">· ✓=tick  ⭐=redeem day  ?=pending</span></div>
+        <div class="tick-row">${tickDots}</div>
+      </div>
+
+      <div class="tick-section">
+        <div class="tick-label">Progress to next ⭐ (${ticksIntoStar}/5)</div>
+        <div style="display:flex;gap:6px">${pips}</div>
+      </div>
+
+      <div class="stars-section">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="star-count">⭐ ${stars}</div>
+          <div class="star-label">stars available<br><span style="font-size:11px;opacity:.75">${screenTimeAvail} ready</span></div>
+        </div>
+        <button class="redeem-btn" onclick="openRedeem(${child.id})" ${stars===0?'disabled':''}>🎮 Redeem</button>
+      </div>
+
+      ${actionArea}
+    </div>`;
+  }
+
+  document.getElementById('page-home').innerHTML=html||'<div class="empty-state"><span class="emoji">👨‍👩‍👧‍👦</span>Add children in Settings!</div>';
+}
+
+// ── RENDER HISTORY ────────────────────────────────────────────────────────────
+function renderHistory(){
+  let html='<div class="section-title">Tick history</div>';
+  for(const child of state.children){
+    const c=COLORS[child.color%COLORS.length];
+    const entries=getTicksForChild(child.id).slice(0,60);
+    html+=`<div class="history-card">
+      <div class="history-child-header">
+        <div class="avatar" style="width:38px;height:38px;font-size:19px;background:${c.bg};color:${c.accent}">${c.emoji}</div>
+        <div><strong style="font-family:'Nunito',sans-serif">${child.name}</strong>
+        <div style="font-size:12px;color:var(--muted)">${entries.length} ticks · ${getTotalStarsEarned(child.id)} ⭐ earned</div></div>
+      </div>
+      <div class="history-entries">`;
+    if(!entries.length) html+='<div style="text-align:center;padding:14px;color:var(--muted);font-size:13px">No ticks yet!</div>';
+    for(const e of entries){
+      const who=e.who==='parent'
+        ?'<span class="history-who who-parent">Parent</span>'
+        :'<span class="history-who who-child">Child</span>';
+      const commentLine=e.comment?`<div style="font-size:12px;color:var(--purple);margin-top:3px">💬 "${e.comment}"</div>`:'';
+      html+=`<div class="history-entry">
+        <div class="history-date">${fmtShort(e.date)}</div>
+        <div class="history-note">${e.note||'—'}${commentLine}</div>${who}
+      </div>`;
+    }
+    html+='</div></div>';
+  }
+  document.getElementById('page-history').innerHTML=html;
+}
+
+// ── RENDER REDEEM ─────────────────────────────────────────────────────────────
+function renderRedeem(){
+  let html='<div class="section-title">🎮 Screen time wallet</div>';
+  for(const child of state.children){
+    const c=COLORS[child.color%COLORS.length];
+    const stars=getStarsForChild(child.id);
+    const isMins=(child.redeemUnit||'mins')==='mins';
+    const totalLabel=isMins?fmtTime(stars*state.minsPerStar):(stars+(stars===1?' day':' days'));
+    const hasOverride=child.starOverride!==null&&child.starOverride!==undefined;
+    const redemps=state.redemptions.filter(r=>r.childId===child.id).slice().reverse().slice(0,10);
+    html+=`<div class="history-card">
+      <div class="history-child-header" style="justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="avatar" style="width:38px;height:38px;font-size:19px;background:${c.bg};color:${c.accent}">${c.emoji}</div>
+          <div><strong style="font-family:'Nunito',sans-serif">${child.name}</strong>
+            <div style="font-size:12px;color:var(--muted)">⭐ ${stars} stars available${hasOverride?' <span style="background:#EDE9FE;color:#7C3AED;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700">manual</span>':''}</div>
+            <div style="font-size:11px;color:var(--muted)">Redeem as: ${isMins?'screen minutes':'screen days'}</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:20px;font-weight:900;font-family:'Nunito',sans-serif;color:var(--teal)">${totalLabel}</div>
+          <div style="font-size:11px;color:var(--muted)">available</div>
+        </div>
+      </div>
+      <div class="history-entries">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Redemption log</div>`;
+    if(!redemps.length) html+='<div style="text-align:center;padding:10px;color:var(--muted);font-size:13px">No redemptions yet</div>';
+    for(const r of redemps){
+      const ds=new Date(r.date).toLocaleDateString('en-SG',{day:'numeric',month:'short'});
+      const rewardLabel=r.days?r.days+(r.days===1?' day':' days'):fmtTime(r.mins||0);
+      html+=`<div class="redeem-entry">
+        <div><span style="color:var(--muted);font-size:12px">${ds}</span> · ${r.stars} ⭐ redeemed</div>
+        <div class="redeem-mins">+${rewardLabel}</div>
+      </div>`;
+    }
+    html+='</div></div>';
+  }
+  document.getElementById('page-redeem').innerHTML=html;
+}
+
+// ── RENDER SETTINGS ───────────────────────────────────────────────────────────
+function renderSettings(){
+  let childRows='';
+  for(const child of state.children){
+    const c=COLORS[child.color%COLORS.length];
+    const currentStars=getStarsForChild(child.id);
+    const overrideVal=child.starOverride!==null&&child.starOverride!==undefined?child.starOverride:'';
+    const isMins=(child.redeemUnit||'mins')==='mins';
+    childRows+=`<div class="child-setting-row" style="flex-wrap:wrap;gap:10px;padding:14px 0">
+      <!-- Name + emoji row -->
+      <div style="display:flex;align-items:center;gap:8px;width:100%">
+        <div class="avatar" style="background:${c.bg};color:${c.accent}">${c.emoji}</div>
+        <input type="text" id="child-name-${child.id}" value="${child.name}" placeholder="Name" style="flex:1">
+        <select id="child-color-${child.id}" style="border:2px solid var(--border);border-radius:10px;padding:8px;font-size:18px;background:var(--bg)">
+          ${COLORS.map((col,i)=>`<option value="${i}" ${i===child.color?'selected':''}>${col.emoji}</option>`).join('')}
+        </select>
+      </div>
+      <!-- WhatsApp -->
+      <div style="width:100%">
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">📱 WhatsApp number</label>
+        <input type="text" id="child-wa-${child.id}" value="${child.waNumber||''}" placeholder="+6591234567" style="font-size:13px;padding:8px 10px;width:100%">
+      </div>
+      <!-- Star override -->
+      <div style="width:100%">
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">⭐ Overwrite star balance</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" id="child-stars-${child.id}" value="${overrideVal}" min="0" placeholder="Current: ${currentStars}" style="flex:1;padding:8px 10px;font-size:14px">
+          <button onclick="clearStarOverride(${child.id})" style="flex-shrink:0;padding:8px 10px;border-radius:10px;border:2px solid var(--border);background:var(--bg);font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;color:var(--muted)">Clear</button>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:4px">Current balance: <strong>${currentStars} ⭐</strong>${child.starOverride!==null&&child.starOverride!==undefined?' (manually set)':' (from ticks)'}. Enter a number to override. Tap Clear to go back to tick-based count.</p>
+      </div>
+      <!-- Redeem unit -->
+      <div style="width:100%">
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">🎮 Redeem stars as</label>
+        <div style="display:flex;gap:8px">
+          <button id="unit-mins-${child.id}" onclick="setRedeemUnit(${child.id},'mins')"
+            style="flex:1;padding:9px;border-radius:10px;border:2px solid ${isMins?'var(--purple)':'var(--border)'};background:${isMins?'var(--purple-light)':'var(--bg)'};font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;color:${isMins?'var(--purple)':'var(--muted)'}">
+            ⏱ Screen minutes
+          </button>
+          <button id="unit-days-${child.id}" onclick="setRedeemUnit(${child.id},'days')"
+            style="flex:1;padding:9px;border-radius:10px;border:2px solid ${!isMins?'var(--purple)':'var(--border)'};background:${!isMins?'var(--purple-light)':'var(--bg)'};font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;color:${!isMins?'var(--purple)':'var(--muted)'}">
+            📅 Screen days
+          </button>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:4px">${isMins?'1 ⭐ = '+state.minsPerStar+' mins of screen time':'1 ⭐ = 1 full day of screen time'}</p>
+      </div>
+      <!-- Save button -->
+      <button onclick="saveChildSettings(${child.id})"
+        style="width:100%;padding:11px;border-radius:10px;border:none;background:var(--purple);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer">
+        💾 Save ${child.name}'s settings
+      </button>
+    </div>`;
+  }
+
+  document.getElementById('page-settings').innerHTML=`
+    <div class="section-title">Settings</div>
+    <div class="settings-section">
+      <h3>Children</h3>${childRows}
+      <p style="font-size:12px;color:var(--muted);margin-top:4px">Child's WhatsApp is pinged when a parent gives a tick with a comment.</p>
+    </div>
+    <div class="settings-section">
+      <h3>Screen time</h3>
+      <div class="screentime-row">
+        <label>Minutes per ⭐ star</label>
+        <input type="number" id="mins-per-star" value="${state.minsPerStar}" min="5" max="480">
+      </div>
+      <button onclick="saveMins()" style="margin-top:12px;width:100%;padding:11px;border-radius:10px;border:none;background:var(--purple);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer">Save screen time setting</button>
+      <p style="font-size:12px;color:var(--muted);margin-top:8px">5 ticks → 1 ⭐ → ${state.minsPerStar} mins screen time</p>
+    </div>
+    <div class="settings-section">
+      <h3>WhatsApp — parent numbers</h3>
+      <div style="margin-bottom:12px">
+        <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:5px">👨 Dad's number (with country code)</label>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="wa-dad" value="${state.waDad}" placeholder="+6591234567" style="flex:1">
+          <button onclick="saveParentNumbers()" style="flex-shrink:0;padding:10px 14px;border-radius:10px;border:none;background:var(--purple);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer">Save</button>
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:5px">👩 Mum's number (with country code)</label>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="wa-mom" value="${state.waMom}" placeholder="+6598765432" style="flex:1">
+          <button onclick="saveParentNumbers()" style="flex-shrink:0;padding:10px 14px;border-radius:10px;border:none;background:var(--purple);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer">Save</button>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-top:4px">Tap Save after entering either number. Both are saved together.</p>
+      <p style="font-size:12px;color:var(--muted);margin-top:6px">When a child submits a justification, WhatsApp will open with a pre-filled message to both parents.</p>
+    </div>
+    <div class="settings-section">
+      <h3>Parent PIN</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">The PIN protects Parent Tick, Approve/Decline, past tick editing, and this Settings page. Default is <strong>0000</strong> — change it now!</p>
+      <button onclick="openChangePin()" style="width:100%;padding:12px;border-radius:10px;border:none;background:var(--purple);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer">🔑 Change PIN</button>
+    </div>
+    <div class="settings-section">
+      <h3>Debug</h3>
+      <button onclick="showDebug()" style="width:100%;padding:11px;border-radius:10px;border:2px solid var(--border);background:var(--bg);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:8px">🔍 Show raw tick data</button>
+      <button onclick="testFirebaseSave()" style="width:100%;padding:11px;border-radius:10px;border:none;background:var(--teal);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer">☁️ Test Firebase save now</button>
+      <div id="debug-out" style="margin-top:10px;font-size:11px;color:var(--muted);word-break:break-all;line-height:1.6"></div>
+    </div>
+    <div class="settings-section">
+      <h3>About</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">✨ <strong>Starry Starry Lims</strong> — The Lim family's daily behaviour tracker.<br>5 good days = 1 ⭐ = screen time reward.<br><br>Data syncs live across all phones via Google Sheets. Works offline too — changes sync when connection is restored.</p>
+    </div>`;
+}
+
+function saveChildSettings(id){
+  const child=state.children.find(c=>c.id===id);
+  if(!child) return;
+  const nameEl=document.getElementById('child-name-'+id);
+  const colorEl=document.getElementById('child-color-'+id);
+  const waEl=document.getElementById('child-wa-'+id);
+  const starsEl=document.getElementById('child-stars-'+id);
+  if(nameEl) child.name=(nameEl.value||'Child').trim()||'Child';
+  if(colorEl) child.color=parseInt(colorEl.value);
+  if(waEl) child.waNumber=waEl.value.trim();
+  if(starsEl){
+    const v=starsEl.value.trim();
+    if(v===''||v===null){
+      child.starOverride=null;
+      child.overrideTickCount=0;
+    } else {
+      const n=parseInt(v);
+      if(!isNaN(n)&&n>=0){
+        child.starOverride=n;
+        // Record how many ticks exist NOW so we can count new ones on top
+        child.overrideTickCount=getTicksForChild(child.id).length;
+        state.redemptions.forEach(r=>{ if(Number(r.childId)===child.id) r.afterOverride=false; });
+      }
+    }
+  }
+  saveState();
+  showToast('✅ '+child.name+'\'s settings saved!');
+  renderHome();
+  renderSettings();
+}
+
+function clearStarOverride(id){
+  const child=state.children.find(c=>c.id===id);
+  if(!child) return;
+  child.starOverride=null;
+  child.overrideTickCount=0;
+  state.redemptions.forEach(r=>{ if(Number(r.childId)===id) delete r.afterOverride; });
+  saveState();
+  showToast('✅ Star balance reset to tick-based count');
+  renderSettings();
+  renderHome();
+}
+
+function setRedeemUnit(id, unit){
+  const child=state.children.find(c=>c.id===id);
+  if(!child) return;
+  child.redeemUnit=unit;
+  // Update toggle buttons immediately without full re-render
+  const isMins=unit==='mins';
+  ['mins','days'].forEach(u=>{
+    const btn=document.getElementById('unit-'+u+'-'+id);
+    if(!btn) return;
+    const active=u===unit;
+    btn.style.borderColor=active?'var(--purple)':'var(--border)';
+    btn.style.background=active?'var(--purple-light)':'var(--bg)';
+    btn.style.color=active?'var(--purple)':'var(--muted)';
+  });
+  // Update the hint text
+  const hint=document.querySelector('#unit-mins-'+id)?.closest('div')?.nextElementSibling;
+  if(hint) hint.textContent=isMins?'1 ⭐ = '+state.minsPerStar+' mins of screen time':'1 ⭐ = 1 full day of screen time';
+  // Don't save yet — will save when they tap Save button
+}
+
+function saveParentNumbers(){
+  const dad=document.getElementById('wa-dad');
+  const mom=document.getElementById('wa-mom');
+  if(dad) state.waDad=dad.value.trim();
+  if(mom) state.waMom=mom.value.trim();
+  saveState();
+  showToast('✅ Parent numbers saved!');
+}
+
+function saveMins(){
+  const el=document.getElementById('mins-per-star');
+  if(el) state.minsPerStar=Math.max(5,Math.min(480,parseInt(el.value)||30));
+  saveState();
+  showToast('✅ Screen time setting saved!');
+  renderSettings();
+}
+
+async function testFirebaseSave(){
+  const out = document.getElementById('debug-out');
+  if(!out) return;
+  out.textContent = '⏳ Testing…\n';
+
+  // Test 1: localStorage write/read
+  try{
+    localStorage.setItem('_test_key', 'hello');
+    const val = localStorage.getItem('_test_key');
+    out.textContent += 'localStorage: ' + (val==='hello' ? '✅ Working' : '❌ Failed') + '\n';
+    localStorage.removeItem('_test_key');
+  } catch(e){
+    out.textContent += 'localStorage: ❌ Error: ' + e.message + '\n';
+  }
+
+  // Test 2: Check what's currently saved
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(raw){
+    const d = JSON.parse(raw);
+    const tickCount = Object.keys(d.ticks||{}).length;
+    out.textContent += 'Saved ticks: ' + tickCount + '\n';
+    out.textContent += 'Saved at: ' + new Date(d._savedAt||0).toLocaleString() + '\n';
+  } else {
+    out.textContent += 'No data in localStorage key: ' + STORAGE_KEY + '\n';
+  }
+
+  // Test 3: Firebase
+  try{
+    const res = await fetch(FIREBASE_URL+'?t='+Date.now());
+    const data = await res.json();
+    const fTickCount = data && data.ticks ? Object.keys(data.ticks).length : 0;
+    out.textContent += 'Firebase ticks: ' + fTickCount + '\n';
+    out.textContent += 'Firebase savedAt: ' + new Date((data&&data._savedAt)||0).toLocaleString();
+  } catch(e){
+    out.textContent += 'Firebase: ❌ ' + e.message;
+  }
+}
+function showDebug(){
+  const out=document.getElementById('debug-out');
+  if(!out) return;
+  const lines=[];
+  lines.push('=== TICKS ('+Object.keys(state.ticks).length+') ===');
+  Object.entries(state.ticks).forEach(([k,v])=>lines.push(k+' → who:'+v.who));
+  lines.push('');
+  state.children.forEach(c=>{
+    const t=getTicksForChild(c.id);
+    const s=getStarsForChild(c.id);
+    lines.push(c.name+': '+t.length+' ticks, '+s+' stars available');
+  });
+  lines.push('');
+  lines.push('=== REDEMPTIONS ('+state.redemptions.length+') ===');
+  state.redemptions.forEach(r=>lines.push('cid:'+r.childId+' stars:'+r.stars+' date:'+r.dateStr));
+  out.textContent=lines.join('\n');
+}
+function updateChildWa(id,val){
+  const child=state.children.find(c=>c.id===id);
+  if(child){child.waNumber=val.trim();saveState()}
+}
+function updateChildName(id,val){
+  const child=state.children.find(c=>c.id===id);
+  if(child){child.name=(val||'Child').trim()||'Child';saveState();renderHome()}
+}
+function updateChildColor(id,val){
+  const child=state.children.find(c=>c.id===id);
+  if(child){child.color=parseInt(val);saveState();renderHome();renderSettings()}
+}
+function updateMins(val){
+  state.minsPerStar=Math.max(5,Math.min(480,parseInt(val)||30));
+  saveState();
+}
+
+// ── RENDER CALENDAR ───────────────────────────────────────────────────────────
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth(); // 0-indexed
+let calChildIdx = 0; // index into state.children
+let calSelectedDate = null;
+
+function renderCalendar(){
+  const el = document.getElementById('page-calendar');
+  const today = todayStr();
+  const todayD = new Date();
+  const child = state.children[calChildIdx] || state.children[0];
+  const c = COLORS[child.color % COLORS.length];
+
+  // All tick dates for this child
+  const tickEntries = getTicksForChild(child.id);
+  const tickMap = {}; // date → tick entry
+  tickEntries.forEach(e => tickMap[e.date] = e);
+  const pendingMap = {};
+  Object.entries(state.pendingTicks)
+    .filter(([k]) => k.startsWith(child.id+'-'))
+    .forEach(([k,v]) => { pendingMap[k.slice((child.id+'-').length)] = v; });
+
+  // Build per-child redemption date set using "childId-dateStr" keys
+  const childRedeemDates = new Set(
+    state.redemptions
+      .filter(r=>r.childId===child.id && r.dateStr)
+      .map(r=>r.dateStr)
+  );
+  // Also check legacy redemptionDates array for "cid-date" keys
+  (state.redemptionDates||[]).forEach(k=>{
+    const prefix=String(child.id)+'-';
+    if(k.startsWith(prefix)) childRedeemDates.add(k.slice(prefix.length));
+  });
+
+  // Helper: get redemptions for this child on a date
+  function getChildRedemptionsOnDate(dateStr){
+    return state.redemptions.filter(r=>r.childId===child.id && r.dateStr===dateStr);
+  }
+
+  // Month navigation label
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const label = monthNames[calMonth] + ' ' + calYear;
+
+  // Calendar grid
+  const firstDay = new Date(calYear, calMonth, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const daysInPrev = new Date(calYear, calMonth, 0).getDate();
+
+  // Child tabs
+  let childTabs = state.children.map((ch,i) => {
+    const cc = COLORS[ch.color % COLORS.length];
+    return `<button class="cal-child-tab ${i===calChildIdx?'active':''}" onclick="calSwitchChild(${i})">${cc.emoji} ${ch.name}</button>`;
+  }).join('');
+
+  // Day-of-week headers (Sun–Sat)
+  const dows = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let gridHtml = dows.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+
+  // Prev month filler
+  for(let i=0;i<firstDay;i++){
+    const d = daysInPrev - firstDay + 1 + i;
+    gridHtml += `<div class="cal-day empty other-month"><span class="day-num" style="opacity:.3">${d}</span></div>`;
+  }
+
+  // Current month days
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr = calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const isToday = dateStr === today;
+    const hasTick = !!tickMap[dateStr];
+    const hasPend = !!pendingMap[dateStr];
+    const hasRedeem = childRedeemDates.has(dateStr);
+    const isFuture = dateStr > today;
+    const isSelected = dateStr === calSelectedDate;
+
+    let cls = 'cal-day';
+    let icon = '';
+    // Priority: tick > pending > redeem > today-empty
+    if(hasTick && hasRedeem){ cls+=' has-tick'; icon='✓★'; }
+    else if(hasTick){ cls+=' has-tick'; icon='✓'; }
+    else if(hasPend){ cls+=' has-pending'; icon='?'; }
+    else if(hasRedeem){ cls+=' has-redeem'; icon='⭐'; }
+    else if(isToday){ cls+=' is-today no-tick'; }
+    if(isToday) cls+=' is-today';
+    if(isFuture) cls+=' other-month';
+
+    gridHtml += `<div class="${cls}" onclick="calSelectDay('${dateStr}')" style="${isSelected?'outline:2.5px solid var(--purple);outline-offset:1px;border-radius:10px':''}">
+      <span class="day-num">${d}</span>
+      ${icon?`<span class="day-icon" style="font-size:9px">${icon}</span>`:''}
+    </div>`;
+  }
+
+  // Next month filler to complete grid row
+  const totalCells = firstDay + daysInMonth;
+  const remainder = totalCells % 7;
+  if(remainder !== 0){
+    for(let d=1;d<=7-remainder;d++){
+      gridHtml += `<div class="cal-day empty other-month"><span class="day-num" style="opacity:.3">${d}</span></div>`;
+    }
+  }
+
+  // Detail panel for selected date
+  let detailHtml = '';
+  if(calSelectedDate){
+    const tick = tickMap[calSelectedDate];
+    const pend = pendingMap[calSelectedDate];
+    const dayRedemptions = getChildRedemptionsOnDate(calSelectedDate);
+    const isFuture = calSelectedDate > today;
+    detailHtml = `<div class="cal-detail">
+      <div class="cal-detail-date">${fmtDate(calSelectedDate)}</div>`;
+
+    // Tick section
+    if(tick){
+      const who = tick.who==='parent'
+        ? `<span style="font-size:11px;padding:2px 7px;border-radius:20px;font-weight:700;background:var(--sky-light);color:var(--sky)">Parent</span>`
+        : `<span style="font-size:11px;padding:2px 7px;border-radius:20px;font-weight:700;background:var(--purple-light);color:var(--purple)">Child</span>`;
+      detailHtml += `<div class="cal-detail-row">
+        <span style="font-size:18px">✅</span>
+        <div style="flex:1">
+          <div style="font-weight:700;margin-bottom:2px">Tick received ${who}</div>
+          <div style="color:var(--muted);font-size:12px">${tick.note||''}</div>
+          ${tick.comment?`<div style="color:var(--purple);font-size:12px;margin-top:3px">💬 "${tick.comment}"</div>`:''}
+        </div>
+      </div>
+      <button onclick="removeTick('${calSelectedDate}',${child.id})"
+        style="margin-top:8px;width:100%;padding:9px;border-radius:10px;border:2px solid var(--rose);background:var(--rose-light);color:var(--rose);font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer">
+        🗑️ Remove this tick
+      </button>`;
+    } else if(pend){
+      detailHtml += `<div class="cal-detail-row">
+        <span style="font-size:18px">⏳</span>
+        <div style="flex:1">
+          <div style="font-weight:700;margin-bottom:2px;color:var(--purple)">Pending approval</div>
+          <div style="color:var(--muted);font-size:12px;font-style:italic">"${pend.note}"</div>
+        </div>
+      </div>`;
+    } else if(isFuture){
+      detailHtml += `<div style="color:var(--muted);font-size:13px;padding:8px 0">This day hasn't happened yet.</div>`;
+    } else {
+      detailHtml += `<div style="color:var(--muted);font-size:13px;padding:8px 0 12px">No tick on this day.</div>
+      <button onclick="openPastTick('${calSelectedDate}',${child.id})"
+        style="width:100%;padding:11px;border-radius:10px;border:none;background:var(--green);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer">
+        ➕ Add tick for this day
+      </button>`;
+    }
+
+    // Redemption section — show all redemptions on this day for this child
+    if(dayRedemptions.length>0){
+      dayRedemptions.forEach(r=>{
+        const rewardLabel=r.days?(r.days+(r.days===1?' day':' days')+' screen time'):fmtTime(r.mins||0);
+        detailHtml += `<div class="cal-detail-row" style="margin-top:6px;background:var(--amber-light);border-radius:10px;padding:8px 10px;border:none">
+          <span style="font-size:18px">⭐</span>
+          <div style="flex:1">
+            <div style="font-weight:700;color:var(--amber-dark)">${r.stars} star${r.stars>1?'s':''} redeemed</div>
+            <div style="font-size:12px;color:var(--amber-dark);opacity:.8">Unlocked: ${rewardLabel}</div>
+          </div>
+        </div>`;
+      });
+    }
+
+    detailHtml += '</div>';
+  } else {
+    detailHtml = `<div class="cal-detail" style="display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px">Tap a day to see details</div>`;
+  }
+
+  el.innerHTML = `
+    <div class="cal-child-tabs">${childTabs}</div>
+    <div class="cal-header">
+      <button class="cal-nav-btn" onclick="calMove(-1)">‹</button>
+      <div class="cal-month-label">${label}</div>
+      <button class="cal-nav-btn" onclick="calMove(1)">›</button>
+    </div>
+    <div class="cal-grid">${gridHtml}</div>
+    <div class="cal-legend">
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--green-light);border:1.5px solid var(--green)"></div>Tick</div>
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--purple-light);border:1.5px solid var(--purple)"></div>Pending</div>
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--amber-light);border:1.5px solid var(--amber)"></div>Redeemed</div>
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--rose-light);border:1.5px solid var(--rose)"></div>Today</div>
+    </div>
+    ${detailHtml}`;
+}
+
+function calMove(dir){
+  calMonth += dir;
+  if(calMonth > 11){ calMonth=0; calYear++; }
+  if(calMonth < 0){ calMonth=11; calYear--; }
+  calSelectedDate = null;
+  renderCalendar();
+}
+function calSwitchChild(idx){
+  calChildIdx = idx;
+  calSelectedDate = null;
+  renderCalendar();
+}
+function calSelectDay(dateStr){
+  calSelectedDate = calSelectedDate === dateStr ? null : dateStr;
+  renderCalendar();
+}
+
+// ── PAST TICK ─────────────────────────────────────────────────────────────────
+let pastTickDate = null;
+let pastTickChildId = null;
+
+function openPastTick(dateStr, childId){
+  requirePin(()=>{
+    setTimeout(()=>_openPastTick(dateStr, Number(childId)), 350);
+  });
+}
+function _openPastTick(dateStr, childId){
+  pastTickDate = dateStr;
+  pastTickChildId = Number(childId); // always a number
+  const child = state.children.find(c=>c.id===pastTickChildId);
+  if(!child) return;
+  document.getElementById('past-tick-label').textContent =
+    'Adding tick for '+child.name+' · '+fmtDate(dateStr);
+  document.getElementById('past-tick-comment').value = '';
+  document.getElementById('past-tick-note').value = '';
+  openModal('modal-past-tick');
+}
+
+function submitPastTick(){
+  const comment = document.getElementById('past-tick-comment').value.trim();
+  const note = document.getElementById('past-tick-note').value.trim();
+  const cid = Number(pastTickChildId);
+  const key = String(cid)+'-'+pastTickDate;
+
+  // Write tick to state immediately
+  state.ticks[key] = {who:'parent', note:note||'Added retroactively ✓', comment:comment||''};
+  delete state.pendingTicks[key];
+
+  // Count ticks NOW before any async ops
+  const totalTicks = getTicksForChild(cid).length;
+  const newStar = totalTicks>0 && totalTicks%5===0;
+
+  // Close modal and play sound
+  closeModal('modal-past-tick');
+  if(newStar) soundStar(); else soundTick();
+
+  // Re-render immediately with updated state
+  renderHome();
+  renderCalendar();
+
+  // Show toast
+  const child = state.children.find(c=>c.id===cid);
+  showToast(
+    (newStar ? '🌟 New star earned! ' : '✅ ') +
+    'Tick added for '+(child?child.name:'child')+' on '+fmtShort(pastTickDate)
+  );
+
+  // Save to Firebase after UI is updated
+  saveState();
+}
+
+function removeTick(dateStr, childId){
+  requirePin(()=>_removeTick(dateStr, Number(childId)));
+}
+function _removeTick(dateStr, childId){
+  const cid = Number(childId);
+  const key = cid+'-'+dateStr;
+  if(!state.ticks[key]) return;
+  if(!confirm('Remove tick for '+fmtDate(dateStr)+'?')) return;
+  delete state.ticks[key];
+  saveState();
+  soundDecline();
+  showToast('🗑️ Tick removed');
+  renderHome();
+  renderCalendar();
+}
+
+// ── RENDER GUIDE ──────────────────────────────────────────────────────────────
+function renderGuide(){
+  document.getElementById('page-guide').innerHTML = `
+
+    <!-- Hero banner -->
+    <div class="guide-hero">
+      <h2>How to Earn Your Stars ✨</h2>
+      <p>Every great day earns you a tick.<br>Collect enough ticks and you unlock screen time!</p>
+      <div class="guide-formula">
+        <div class="guide-formula-item">
+          <div class="big">5</div>
+          <div class="small">Good Days</div>
+        </div>
+        <div class="guide-formula-op">→</div>
+        <div class="guide-formula-item">
+          <div class="big">⭐ 1</div>
+          <div class="small">Star</div>
+        </div>
+        <div class="guide-formula-op">→</div>
+        <div class="guide-formula-item">
+          <div class="big">🎮</div>
+          <div class="small">Screen Time!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- What counts as a good day -->
+    <div class="guide-section">
+      <div class="guide-section-title">✅ What makes a Good Day?</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5">To earn your daily tick, you need to show good effort in <strong>all four areas</strong> below. You don't have to be perfect — just give your best!</p>
+
+      <div class="guide-criterion">
+        <div class="guide-criterion-icon" style="background:#FEF3C7">😊</div>
+        <div class="guide-criterion-body">
+          <h4>Good Overall Behaviour</h4>
+          <p>Be kind, respectful and cooperative with everyone at home. No unnecessary arguments, listen when spoken to, and treat your siblings and parents well.</p>
+        </div>
+      </div>
+
+      <div class="guide-criterion">
+        <div class="guide-criterion-icon" style="background:#DCFCE7">💪</div>
+        <div class="guide-criterion-body">
+          <h4>Good Work Done</h4>
+          <p>Put in real effort in whatever tasks or activities you have for the day. Do things properly — not just quickly to get them done.</p>
+        </div>
+      </div>
+
+      <div class="guide-criterion">
+        <div class="guide-criterion-icon" style="background:#EDE9FE">📚</div>
+        <div class="guide-criterion-body">
+          <h4>Homework & Study Done</h4>
+          <p>Complete all homework and revision without needing repeated reminders. Sit down, focus, and get it done before play or screen time.</p>
+        </div>
+      </div>
+
+      <div class="guide-criterion">
+        <div class="guide-criterion-icon" style="background:#E0F2FE">📱</div>
+        <div class="guide-criterion-body">
+          <h4>Screen Time Managed Well</h4>
+          <p>Use your devices responsibly. Stop when asked, don't sneak extra time, and make sure screens don't get in the way of your other responsibilities.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- How the tick works -->
+    <div class="guide-section">
+      <div class="guide-section-title">🎯 How to Get Your Tick</div>
+
+      <div class="guide-tip">
+        <div class="tip-icon">👨‍👩‍👧</div>
+        <p><strong>Parent gives it:</strong> If Mum or Dad sees that you've had a great day, they'll give you a tick directly — sometimes with a message for you!</p>
+      </div>
+      <div class="guide-tip">
+        <div class="tip-icon">✏️</div>
+        <p><strong>You request it:</strong> Tap <strong>"I earned it!"</strong> and write a short justification explaining why you deserve a tick. Be honest and specific — Mum or Dad will review and approve it.</p>
+      </div>
+      <div class="guide-tip">
+        <div class="tip-icon">⏳</div>
+        <p><strong>One tick per day only.</strong> Make every day count! You can only earn one tick each day, so give your best consistently.</p>
+      </div>
+    </div>
+
+    <!-- Reward system -->
+    <div class="guide-section">
+      <div class="guide-section-title">🌟 The Star Reward System</div>
+
+      <div class="guide-reward-row">
+        <div class="guide-reward-icon">✅</div>
+        <div class="guide-reward-body">
+          <strong>1 Good Day = 1 Tick</strong>
+          <p>Earn a tick by meeting all four criteria above for the day.</p>
+        </div>
+      </div>
+      <div class="guide-reward-row">
+        <div class="guide-reward-icon">⭐</div>
+        <div class="guide-reward-body">
+          <strong>5 Ticks = 1 Star</strong>
+          <p>Five consistent good days add up to one star. Stars are saved in your wallet.</p>
+        </div>
+      </div>
+      <div class="guide-reward-row">
+        <div class="guide-reward-icon">🎮</div>
+        <div class="guide-reward-body">
+          <strong>Stars = Screen Time</strong>
+          <p>Redeem your stars for screen time whenever you like. The more stars you save, the more time you unlock!</p>
+        </div>
+      </div>
+      <div class="guide-reward-row">
+        <div class="guide-reward-icon">📅</div>
+        <div class="guide-reward-body">
+          <strong>Check your Calendar</strong>
+          <p>Tap the 📅 Calendar tab to see your progress — green days are ticked days, and you can watch your stars grow over time!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Motivational footer -->
+    <div style="background:linear-gradient(135deg,#DCFCE7,#CCFBF1);border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:8px">
+      <div style="font-size:36px;margin-bottom:8px">🏆</div>
+      <div style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;color:#065F46;margin-bottom:6px">You've got this, Lim!</div>
+      <div style="font-size:13px;color:#047857;line-height:1.6">Small efforts every day add up to big rewards.<br>Mum and Dad are cheering you on! 💪</div>
+    </div>
+  `;
+}
+
+// ── LIVE CLOCK & DAILY RESET ──────────────────────────────────────────────────
+let lastKnownDate = todayStr();
+
+function updateDateHeader(){
+  const el = document.getElementById('today-label');
+  if(el) el.textContent = 'Starry Starry Lims · ' + fmtDate(todayStr());
+}
+
+function checkDayRollover(){
+  const now = todayStr();
+  updateDateHeader();
+  if(now !== lastKnownDate){
+    lastKnownDate = now;
+    calMonth = new Date().getMonth();
+    calYear = new Date().getFullYear();
+    renderHome();
+    const calPage = document.getElementById('page-calendar');
+    if(calPage && calPage.classList.contains('active')) renderCalendar();
+  }
+}
+
+// Update header every minute so it's always live with system clock
+setInterval(updateDateHeader, 60000);
+
+// Full day-rollover check every minute
+setInterval(checkDayRollover, 60000);
+
+// Also trigger immediately whenever app becomes visible (phone unlocked, tab switched back)
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState === 'visible') checkDayRollover();
+});
+window.addEventListener('focus', checkDayRollover);
+
+// ── PAGE NAV ──────────────────────────────────────────────────────────────────
+function showPage(name){
+  if(name==='settings'){
+    requirePin(()=>_showPage('settings'));
+    return;
+  }
+  _showPage(name);
+}
+function _showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  const tab=document.getElementById('tab-'+name);
+  if(tab) tab.classList.add('active');
+  if(name==='calendar'){ calMonth=new Date().getMonth(); calYear=new Date().getFullYear(); renderCalendar(); }
+  if(name==='guide') renderGuide();
+  if(name==='redeem') renderRedeem();
+  if(name==='settings') renderSettings();
+}
+
+// Show loading state then fetch from Sheets
+document.getElementById('page-home').innerHTML='<div class="empty-state"><span class="emoji">⏳</span>Loading Lim family data…</div>';
+loadFromSheets();
+</script>
+</body>
+</html>
