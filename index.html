@@ -207,7 +207,10 @@ textarea:focus,input:focus{border-color:var(--purple)}
       <p class="subtitle" id="today-label">Loading… <span style="opacity:.5;font-size:10px">v4.2</span></p>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
-      <button class="settings-btn" onclick="showPage('settings')">⚙️</button>
+      <div style="display:flex;gap:8px">
+        <button class="settings-btn" onclick="location.reload()" title="Refresh">🔄</button>
+        <button class="settings-btn" onclick="showPage('settings')">⚙️</button>
+      </div>
       <span id="sync-status" style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);background:rgba(0,0,0,0.15);padding:3px 8px;border-radius:20px">⏳ Loading…</span>
     </div>
   </div>
