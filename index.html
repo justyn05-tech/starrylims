@@ -384,10 +384,10 @@ function setSyncStatus(status, msg){
 }
 
 // ── LOAD ──────────────────────────────────────────────────────────────────────
-async function loadFromSheets(){
-  setSyncStatus('syncing','⏳ Loading…');
+function loadFromSheets(){
+  setSyncStatus('ok','☁️ Loading…');
 
-  // ── STEP 1: Load localStorage SYNCHRONOUSLY — instant, never fails ──────────
+  // Load from localStorage ONLY — instant, reliable, no network needed
   let bestLocal = null;
   let bestTs = 0;
   for(const key of [STORAGE_KEY,'starrylims_cache','starrylims_v1','starrylim_v1']){
@@ -401,61 +401,56 @@ async function loadFromSheets(){
   }
 
   if(bestLocal){
-    // We have local data — use it immediately, render NOW
     state = ensureStateKeys(bestLocal);
     repairTickKeys();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     lastSavedAt = bestTs;
     setSyncStatus('ok','☁️ Ready');
     renderHome();
+    // Sync with Firebase in background after render — don't block or overwrite
+    setTimeout(syncWithFirebase, 2000);
+  } else {
+    // No local data — fetch from Firebase (first time setup)
+    setSyncStatus('syncing','⏳ Loading…');
+    fetchFromFirebase();
   }
 
-  // ── STEP 2: Fetch Firebase in background — only update if NEWER ─────────────
+  setInterval(pollSheets, 30000);
+}
+
+async function fetchFromFirebase(){
   try{
     const res = await fetch(FIREBASE_URL+'?t='+Date.now());
     const data = await res.json();
     if(data && data.ticks){
-      const remoteTs = data._savedAt||0;
-      if(remoteTs > lastSavedAt){
-        // Firebase genuinely has newer data (from another phone)
-        state = ensureStateKeys(data);
-        repairTickKeys();
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        lastSavedAt = remoteTs;
-        setSyncStatus('ok','☁️ Synced');
-        renderHome();
-      } else if(!bestLocal){
-        // No local data at all — use Firebase whatever the timestamp
-        state = ensureStateKeys(data);
-        repairTickKeys();
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        lastSavedAt = remoteTs;
-        setSyncStatus('ok','☁️ Synced');
-        renderHome();
-      } else {
-        // Local is newer — push local up to Firebase
-        setSyncStatus('ok','☁️ Live');
-        pushToSheets();
-      }
-    } else if(!bestLocal){
-      // Firebase empty, no local — fresh start
-      state = JSON.parse(JSON.stringify(DEFAULT));
-      renderHome();
-      setSyncStatus('ok','☁️ Ready');
+      state = ensureStateKeys(data);
+      repairTickKeys();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      lastSavedAt = data._savedAt||0;
     } else {
-      // Firebase empty but we have local — push local to Firebase
-      setSyncStatus('ok','☁️ Live');
-      pushToSheets();
+      state = JSON.parse(JSON.stringify(DEFAULT));
     }
   } catch(e){
-    if(!bestLocal){
-      state = JSON.parse(JSON.stringify(DEFAULT));
-      renderHome();
-    }
-    setSyncStatus('error','⚠️ Offline');
+    state = JSON.parse(JSON.stringify(DEFAULT));
   }
+  setSyncStatus('ok','☁️ Ready');
+  renderHome();
+}
 
-  setInterval(pollSheets, 20000);
+// Push local state to Firebase — only if local is newer
+async function syncWithFirebase(){
+  if(isSaving||syncTimeout) return;
+  try{
+    const res = await fetch(FIREBASE_URL+'?t='+Date.now());
+    const data = await res.json();
+    const remoteTs = (data&&data._savedAt)||0;
+    if(lastSavedAt > remoteTs){
+      // Local is newer — push to Firebase
+      pushToSheets();
+    }
+    // Remote is newer — another phone saved something newer
+    // but we DON'T overwrite local — local wins on this device
+  } catch(e){}
 }
 
 // ── POLL ──────────────────────────────────────────────────────────────────────
@@ -466,8 +461,9 @@ async function pollSheets(){
     const data = await res.json();
     if(!data||!data.ticks) return;
     const remoteTs = data._savedAt||0;
-    if(remoteTs<=lastSavedAt){ setSyncStatus('ok','☁️ Live'); return; }
-    if(isSaving||syncTimeout) return;
+    // Only update local if Firebase is strictly newer than our last save
+    if(remoteTs <= lastSavedAt) return;
+    // Another phone saved newer data — update this device
     state = ensureStateKeys(data);
     repairTickKeys();
     lastSavedAt = remoteTs;
